@@ -27,14 +27,6 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
     setGraph({ nodes, edges });
   };
 
-  // Reset function
-  const handleReset = () => {
-    initializeGraph();
-    setIsAnimating(false);
-    if (onReset) {
-      onReset();
-    }
-  };
 
   const generateAnimations = useCallback(() => {
     let result = [];
@@ -211,14 +203,6 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
     return animations;
   };
 
-  const heuristic = (a, b) => {
-    // Simple Euclidean distance heuristic using node positions
-    const pa = getNodePosition(a);
-    const pb = getNodePosition(b);
-    const dx = pa.x - pb.x;
-    const dy = pa.y - pb.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
 
 
 

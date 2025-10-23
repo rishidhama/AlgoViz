@@ -19,7 +19,7 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
       default:
         return [];
     }
-  }, [algorithm, data, generateFibonacciAnimations, generateKnapsackAnimations, generateMatrixChainAnimations]);
+  }, [algorithm, data]);
 
   useEffect(() => {
     initializeData();
@@ -71,7 +71,7 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
     animate();
   }, [isPlaying, speed, data, generateAnimations, isAnimating]);
 
-  const initializeData = () => {
+  const initializeData = useCallback(() => {
     switch (algorithm) {
       case 'fibonacci':
         setData({ n: inputValue, memo: new Array(inputValue + 1).fill(-1) });
@@ -90,36 +90,10 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
           dp: Array.from({ length: matrixSize }, () => new Array(matrixSize).fill(-1))
         });
         break;
-      case 'n-queens': {
-        const n = 8;
-        setData({ n, board: Array.from({ length: n }, () => Array(n).fill(0)) });
-        break;
-      }
-      case 'sudoku': {
-        const puzzle = [
-          [5,3,0,0,7,0,0,0,0],
-          [6,0,0,1,9,5,0,0,0],
-          [0,9,8,0,0,0,0,6,0],
-          [8,0,0,0,6,0,0,0,3],
-          [4,0,0,8,0,3,0,0,1],
-          [7,0,0,0,2,0,0,0,6],
-          [0,6,0,0,0,0,2,8,0],
-          [0,0,0,4,1,9,0,0,5],
-          [0,0,0,0,8,0,0,7,9]
-        ];
-        setData({ grid: puzzle });
-        break;
-      }
-      case 'maze-generation': {
-        const rows = 10, cols = 16;
-        const grid = Array.from({ length: rows }, () => Array(cols).fill(1)); // 1 = wall, 0 = path
-        setData({ rows, cols, grid });
-        break;
-      }
       default:
         setData(null);
     }
-  };
+  }, [algorithm, inputValue, knapsackCapacity, matrixSize]);
 
 
   useEffect(() => {

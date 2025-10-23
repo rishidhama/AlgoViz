@@ -22,7 +22,7 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
       default:
         return [];
     }
-  }, [algorithm, tree, generateInorderAnimations, generatePreorderAnimations, generatePostorderAnimations, generateBSTInsertAnimations, generateBSTSearchAnimations]);
+  }, [algorithm, tree]);
 
   useEffect(() => {
     initializeTree();
@@ -72,7 +72,7 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
     animate();
   }, [isPlaying, speed, tree, generateAnimations, isAnimating]);
 
-  const initializeTree = () => {
+  const initializeTree = useCallback(() => {
     // Create a sample BST
     const nodes = [50, 25, 75, 12, 37, 62, 87, 6, 18, 31, 43, 56, 68, 81, 93];
     const tree = { nodes: [], edges: [], values: nodes };
@@ -96,7 +96,7 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
     tree.edges = edges;
     calculatePositions(tree);
     setTree(tree);
-  };
+  }, []);
 
 
   const calculatePositions = (tree) => {
