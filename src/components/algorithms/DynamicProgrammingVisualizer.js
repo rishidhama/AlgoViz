@@ -21,9 +21,33 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
     }
   }, [algorithm, data]);
 
+  const initializeData = useCallback(() => {
+    switch (algorithm) {
+      case 'fibonacci':
+        setData({ n: inputValue, memo: new Array(inputValue + 1).fill(-1) });
+        break;
+      case 'knapsack':
+        setData({
+          weights: [2, 3, 4, 5],
+          values: [3, 4, 5, 6],
+          capacity: knapsackCapacity,
+          dp: Array.from({ length: 5 }, () => new Array(knapsackCapacity + 1).fill(-1))
+        });
+        break;
+      case 'matrix-chain':
+        setData({
+          dimensions: [1, 2, 3, 4, 5],
+          dp: Array.from({ length: matrixSize }, () => new Array(matrixSize).fill(-1))
+        });
+        break;
+      default:
+        setData(null);
+    }
+  }, [algorithm, inputValue, knapsackCapacity, matrixSize]);
+
   useEffect(() => {
     initializeData();
-  }, [algorithm, inputValue, knapsackCapacity, matrixSize, initializeData]);
+  }, [initializeData]);
 
   // Update ref when isPlaying changes
   useEffect(() => {
@@ -70,35 +94,6 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
     };
     animate();
   }, [isPlaying, speed, data, generateAnimations, isAnimating]);
-
-  const initializeData = useCallback(() => {
-    switch (algorithm) {
-      case 'fibonacci':
-        setData({ n: inputValue, memo: new Array(inputValue + 1).fill(-1) });
-        break;
-      case 'knapsack':
-        setData({
-          weights: [2, 3, 4, 5],
-          values: [3, 4, 5, 6],
-          capacity: knapsackCapacity,
-          dp: Array.from({ length: 5 }, () => new Array(knapsackCapacity + 1).fill(-1))
-        });
-        break;
-      case 'matrix-chain':
-        setData({
-          dimensions: [1, 2, 3, 4, 5],
-          dp: Array.from({ length: matrixSize }, () => new Array(matrixSize).fill(-1))
-        });
-        break;
-      default:
-        setData(null);
-    }
-  }, [algorithm, inputValue, knapsackCapacity, matrixSize]);
-
-
-  useEffect(() => {
-    initializeData();
-  }, [algorithm, inputValue, knapsackCapacity, matrixSize]);
 
 
   const generateFibonacciAnimations = () => {

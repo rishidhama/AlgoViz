@@ -24,9 +24,35 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
     }
   }, [algorithm, tree]);
 
+  const initializeTree = useCallback(() => {
+    // Create a sample BST
+    const nodes = [50, 25, 75, 12, 37, 62, 87, 6, 18, 31, 43, 56, 68, 81, 93];
+    const tree = { nodes: [], edges: [], values: nodes };
+    
+    // Build BST structure
+    nodes.forEach(value => {
+      tree.nodes.push({ id: value, value, x: 0, y: 0 });
+    });
+
+    // Create edges based on BST properties
+    const edges = [
+      { from: 50, to: 25 }, { from: 50, to: 75 },
+      { from: 25, to: 12 }, { from: 25, to: 37 },
+      { from: 75, to: 62 }, { from: 75, to: 87 },
+      { from: 12, to: 6 }, { from: 12, to: 18 },
+      { from: 37, to: 31 }, { from: 37, to: 43 },
+      { from: 62, to: 56 }, { from: 62, to: 68 },
+      { from: 87, to: 81 }, { from: 87, to: 93 }
+    ];
+
+    tree.edges = edges;
+    calculatePositions(tree);
+    setTree(tree);
+  }, []);
+
   useEffect(() => {
     initializeTree();
-  }, [algorithm, insertValue, searchValue]);
+  }, [initializeTree]);
 
   // Update ref when isPlaying changes
   useEffect(() => {
@@ -71,32 +97,6 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
     };
     animate();
   }, [isPlaying, speed, tree, generateAnimations, isAnimating]);
-
-  const initializeTree = useCallback(() => {
-    // Create a sample BST
-    const nodes = [50, 25, 75, 12, 37, 62, 87, 6, 18, 31, 43, 56, 68, 81, 93];
-    const tree = { nodes: [], edges: [], values: nodes };
-    
-    // Build BST structure
-    nodes.forEach(value => {
-      tree.nodes.push({ id: value, value, x: 0, y: 0 });
-    });
-
-    // Create edges based on BST properties
-    const edges = [
-      { from: 50, to: 25 }, { from: 50, to: 75 },
-      { from: 25, to: 12 }, { from: 25, to: 37 },
-      { from: 75, to: 62 }, { from: 75, to: 87 },
-      { from: 12, to: 6 }, { from: 12, to: 18 },
-      { from: 37, to: 31 }, { from: 37, to: 43 },
-      { from: 62, to: 56 }, { from: 62, to: 68 },
-      { from: 87, to: 81 }, { from: 87, to: 93 }
-    ];
-
-    tree.edges = edges;
-    calculatePositions(tree);
-    setTree(tree);
-  }, []);
 
 
   const calculatePositions = (tree) => {

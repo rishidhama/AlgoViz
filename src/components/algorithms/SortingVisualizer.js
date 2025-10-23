@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, onReset }) => {
   const [array, setArray] = useState([]);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0);
   const [comparisons, setComparisons] = useState(0);
