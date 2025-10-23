@@ -100,7 +100,7 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
       setIsAnimating(false);
     };
     animate();
-  }, [isPlaying, speed, graph, generateAnimations]);
+  }, [isPlaying, speed, graph, generateAnimations, isAnimating]);
 
   const generateBFSAnimations = () => {
     const animations = [];
