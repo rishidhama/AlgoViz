@@ -9,6 +9,7 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(200);
   const [data, setData] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Initialize with random data
   useEffect(() => {
@@ -16,7 +17,10 @@ function App() {
   }, []);
 
   const generateRandomData = () => {
-    const newData = Array.from({ length: 20 }, () => 
+    // Reduce array size for better visualization - no scrolling needed
+    const isMobile = window.innerWidth < 768;
+    const arrayLength = isMobile ? 10 : 15;
+    const newData = Array.from({ length: arrayLength }, () => 
       Math.floor(Math.random() * 100) + 10
     );
     setData(newData);
@@ -26,6 +30,14 @@ function App() {
     setSelectedAlgorithm(algorithm);
     setIsPlaying(false);
     generateRandomData();
+  };
+
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
   };
 
   const handlePlayPause = () => {
@@ -50,17 +62,16 @@ function App() {
     <ThemeProvider>
       <div className="h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 transition-all duration-500 flex flex-col overflow-hidden">
         <Header 
-          isPlaying={isPlaying}
-          onPlayPause={handlePlayPause}
-          speed={speed}
-          onSpeedChange={handleSpeedChange}
-          onGenerateData={handleReset}
+          onToggleSidebar={handleToggleSidebar}
+          isSidebarOpen={isSidebarOpen}
         />
         
         <div className="flex flex-1 overflow-hidden">
           <Sidebar 
             selectedAlgorithm={selectedAlgorithm}
             onAlgorithmSelect={handleAlgorithmSelect}
+            isOpen={isSidebarOpen}
+            onClose={handleCloseSidebar}
           />
           
           <MainContent 
@@ -68,6 +79,8 @@ function App() {
             data={data}
             isPlaying={isPlaying}
             speed={speed}
+            onSpeedChange={handleSpeedChange}
+            onPlayPause={handlePlayPause}
             onDataChange={setData}
             onGenerateData={handleReset}
           />

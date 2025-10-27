@@ -8,94 +8,6 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
   const [matrixSize, setMatrixSize] = useState(4);
   const isPlayingRef = useRef(isPlaying);
 
-  const generateAnimations = useCallback(() => {
-    switch (algorithm) {
-      case 'fibonacci':
-        return generateFibonacciAnimations();
-      case 'knapsack':
-        return generateKnapsackAnimations();
-      case 'matrix-chain':
-        return generateMatrixChainAnimations();
-      default:
-        return [];
-    }
-  }, [algorithm, data]);
-
-  const initializeData = useCallback(() => {
-    switch (algorithm) {
-      case 'fibonacci':
-        setData({ n: inputValue, memo: new Array(inputValue + 1).fill(-1) });
-        break;
-      case 'knapsack':
-        setData({
-          weights: [2, 3, 4, 5],
-          values: [3, 4, 5, 6],
-          capacity: knapsackCapacity,
-          dp: Array.from({ length: 5 }, () => new Array(knapsackCapacity + 1).fill(-1))
-        });
-        break;
-      case 'matrix-chain':
-        setData({
-          dimensions: [1, 2, 3, 4, 5],
-          dp: Array.from({ length: matrixSize }, () => new Array(matrixSize).fill(-1))
-        });
-        break;
-      default:
-        setData(null);
-    }
-  }, [algorithm, inputValue, knapsackCapacity, matrixSize]);
-
-  useEffect(() => {
-    initializeData();
-  }, [initializeData]);
-
-  // Update ref when isPlaying changes
-  useEffect(() => {
-    isPlayingRef.current = isPlaying;
-  }, [isPlaying]);
-
-  // Animation effect - responds to isPlaying from parent
-  useEffect(() => {
-    if (!isPlaying) {
-      setIsAnimating(false);
-      return;
-    }
-
-    if (isAnimating) return; // Prevent multiple animations from starting
-
-    if (!data) return;
-
-    const steps = generateAnimations();
-    if (steps.length === 0) {
-      setIsAnimating(false);
-      return;
-    }
-
-    setIsAnimating(true);
-
-    const animate = async () => {
-      const delay = speed;
-
-      for (let i = 0; i < steps.length; i++) {
-        if (!isPlayingRef.current) break; // Stop if isPlaying becomes false
-
-        const animation = steps[i];
-        
-        // Update data state based on animation
-        setData(prevData => {
-          const next = { ...prevData, currentAnimation: animation };
-          return next;
-        });
-
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-      
-      setIsAnimating(false);
-    };
-    animate();
-  }, [isPlaying, speed, data, generateAnimations, isAnimating]);
-
-
   const generateFibonacciAnimations = () => {
     const animations = [];
     const memo = new Array(inputValue + 1).fill(-1);
@@ -211,9 +123,92 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
     return animations;
   };
 
+  const generateAnimations = useCallback(() => {
+    switch (algorithm) {
+      case 'fibonacci':
+        return generateFibonacciAnimations();
+      case 'knapsack':
+        return generateKnapsackAnimations();
+      case 'matrix-chain':
+        return generateMatrixChainAnimations();
+      default:
+        return [];
+    }
+  }, [algorithm, data, inputValue, knapsackCapacity, matrixSize]);
 
+  const initializeData = useCallback(() => {
+    switch (algorithm) {
+      case 'fibonacci':
+        setData({ n: inputValue, memo: new Array(inputValue + 1).fill(-1) });
+        break;
+      case 'knapsack':
+        setData({
+          weights: [2, 3, 4, 5],
+          values: [3, 4, 5, 6],
+          capacity: knapsackCapacity,
+          dp: Array.from({ length: 5 }, () => new Array(knapsackCapacity + 1).fill(-1))
+        });
+        break;
+      case 'matrix-chain':
+        setData({
+          dimensions: [1, 2, 3, 4, 5],
+          dp: Array.from({ length: matrixSize }, () => new Array(matrixSize).fill(-1))
+        });
+        break;
+      default:
+        setData(null);
+    }
+  }, [algorithm, inputValue, knapsackCapacity, matrixSize]);
 
+  useEffect(() => {
+    initializeData();
+  }, [initializeData]);
 
+  // Update ref when isPlaying changes
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  // Animation effect - responds to isPlaying from parent
+  useEffect(() => {
+    if (!isPlaying) {
+      setIsAnimating(false);
+      return;
+    }
+
+    if (isAnimating) return; // Prevent multiple animations from starting
+
+    if (!data) return;
+
+    const steps = generateAnimations();
+    if (steps.length === 0) {
+      setIsAnimating(false);
+      return;
+    }
+
+    setIsAnimating(true);
+
+    const animate = async () => {
+      const delay = speed;
+
+      for (let i = 0; i < steps.length; i++) {
+        if (!isPlayingRef.current) break; // Stop if isPlaying becomes false
+
+        const animation = steps[i];
+        
+        // Update data state based on animation
+        setData(prevData => {
+          const next = { ...prevData, currentAnimation: animation };
+          return next;
+        });
+
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+      
+      setIsAnimating(false);
+    };
+    animate();
+  }, [isPlaying, speed, data, generateAnimations, isAnimating]);
 
   const renderFibonacci = () => {
     if (!data || !data.memo) return null;
@@ -381,9 +376,6 @@ const DynamicProgrammingVisualizer = ({ algorithm, isPlaying, speed, onReset }) 
       </div>
     );
   };
-
-
-
 
   if (!data) return <div>Loading...</div>;
 

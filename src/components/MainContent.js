@@ -185,12 +185,12 @@ const CodeDisplay = ({ code }) => {
         
         {/* Language Tabs - Only show available languages */}
         {Object.keys(availableLanguages).length > 1 && (
-          <div className="flex space-x-1 bg-white dark:bg-dark-800 rounded-lg p-1 shadow-md">
+          <div className="flex flex-wrap gap-1 bg-white dark:bg-dark-800 rounded-lg p-1 shadow-md">
             {Object.entries(availableLanguages).map(([key, lang]) => (
               <button
                 key={key}
                 onClick={() => setSelectedLanguage(key)}
-                className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 ${
+                className={`px-2 py-1 rounded-md text-xs font-medium transition-all duration-200 min-w-[36px] ${
                   selectedLanguage === key
                     ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-700'
@@ -233,7 +233,7 @@ const CodeDisplay = ({ code }) => {
   );
 };
 
-const MainContent = ({ algorithm, data, isPlaying, speed, onDataChange, onGenerateData }) => {
+const MainContent = ({ algorithm, data, isPlaying, speed, onSpeedChange, onPlayPause, onDataChange, onGenerateData }) => {
   const [customData, setCustomData] = useState('');
   const [targetValue, setTargetValue] = useState(50);
 
@@ -5812,9 +5812,8 @@ bool solveSudoku(char board[9][9]) {
       case 'inorder':
       case 'preorder':
       case 'postorder':
-      case 'bst':
-      case 'avl':
-      case 'rb':
+      case 'bst-insert':
+      case 'bst-search':
         return (
           <TreeVisualizer
             algorithm={algorithm}
@@ -5987,18 +5986,78 @@ bool solveSudoku(char board[9][9]) {
         )}
 
         {/* Visualizer */}
-        <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 dark:border-dark-700/50 p-4">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-lg">V</span>
+        <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 dark:border-dark-700/50 p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm sm:text-lg">V</span>
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                  Live Visualization
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:block">
+                  Watch the algorithm in action
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                Live Visualization
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Watch the algorithm in action
-              </p>
+
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+              {/* Speed Control */}
+              <div className="flex items-center space-x-2 sm:space-x-3 bg-gray-100 dark:bg-dark-700 rounded-xl px-3 sm:px-4 py-2">
+                <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  Speed:
+                </label>
+                <input
+                  type="range"
+                  min="50"
+                  max="500"
+                  step="25"
+                  value={speed}
+                  onChange={(e) => onSpeedChange(parseInt(e.target.value))}
+                  className="w-20 sm:w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600"
+                  style={{
+                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((speed - 50) / (500 - 50)) * 100}%, #e5e7eb ${((speed - 50) / (500 - 50)) * 100}%, #e5e7eb 100%)`
+                  }}
+                />
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 w-10 sm:w-12 font-mono">
+                  {speed}ms
+                </span>
+              </div>
+
+              {/* Play/Pause Button */}
+              <button
+                onClick={onPlayPause}
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none touch-manipulation text-sm sm:text-base"
+              >
+                {isPlaying ? (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                  </svg>
+                    <span>Pause</span>
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <span>Play</span>
+                  </>
+                )}
+              </button>
+
+              {/* Reset Button */}
+              <button
+                onClick={onGenerateData}
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-medium py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105 touch-manipulation text-sm sm:text-base"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Reset</span>
+              </button>
             </div>
           </div>
           {renderVisualizer()}
