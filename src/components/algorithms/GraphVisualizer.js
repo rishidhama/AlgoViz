@@ -84,7 +84,10 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
 
     const animate = async () => {
       for (let i = 0; i < steps.length; i++) {
-        if (!isPlayingRef.current) break; // Stop if isPlaying becomes false
+        if (!isPlayingRef.current) {
+          setIsAnimating(false);
+          break; // Stop if isPlaying becomes false
+        }
 
         const animation = steps[i];
         
@@ -100,7 +103,7 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
       setIsAnimating(false);
     };
     animate();
-  }, [isPlaying, speed, graph, generateAnimations, isAnimating]);
+  }, [isPlaying, speed]); // Removed problematic dependencies
 
   const generateBFSAnimations = () => {
     const animations = [];
@@ -345,17 +348,17 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-wrap gap-2 sm:gap-4 items-start sm:items-center">
         {(algorithm === 'dijkstra' || algorithm === 'bfs' || algorithm === 'dfs') && (
-          <div className="flex gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+            <div className="flex-1 sm:flex-initial">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Start Node:
               </label>
               <select
                 value={selectedStartNode}
                 onChange={(e) => setSelectedStartNode(e.target.value)}
-                className="px-3 py-2 border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-white"
+                className="w-full px-2 sm:px-3 py-2 border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-white text-sm"
               >
                 {graph.nodes.map(node => (
                   <option key={node} value={node}>{node}</option>
@@ -364,14 +367,14 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
             </div>
 
             {algorithm === 'dijkstra' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <div className="flex-1 sm:flex-initial">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   End Node:
                 </label>
                 <select
                   value={selectedEndNode}
                   onChange={(e) => setSelectedEndNode(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-white"
+                  className="w-full px-2 sm:px-3 py-2 border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-white text-sm"
                 >
                   {graph.nodes.map(node => (
                     <option key={node} value={node}>{node}</option>
@@ -384,8 +387,8 @@ const GraphVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
       </div>
 
       {/* Graph Visualization */}
-      <div className="bg-gray-50 dark:bg-dark-700 rounded-lg p-4 overflow-hidden">
-        <svg width="900" height="200" className="mx-auto">
+      <div className="bg-gray-50 dark:bg-dark-700 rounded-lg p-3 sm:p-4 overflow-x-auto">
+        <svg width="900" height="200" viewBox="0 0 900 200" className="mx-auto max-w-full h-auto" preserveAspectRatio="xMidYMid meet">
           {/* Edges */}
           {graph.edges.map((edge, index) => {
             const fromPos = getNodePosition(edge.from);

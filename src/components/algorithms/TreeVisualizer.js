@@ -80,7 +80,10 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
 
     const animate = async () => {
       for (let i = 0; i < steps.length; i++) {
-        if (!isPlayingRef.current) break; // Stop if isPlaying becomes false
+        if (!isPlayingRef.current) {
+          setIsAnimating(false);
+          break; // Stop if isPlaying becomes false
+        }
 
         const animation = steps[i];
         
@@ -96,7 +99,7 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
       setIsAnimating(false);
     };
     animate();
-  }, [isPlaying, speed, tree, generateAnimations, isAnimating]);
+  }, [isPlaying, speed]); // Removed problematic dependencies
 
 
   const calculatePositions = (tree) => {
@@ -350,8 +353,8 @@ const TreeVisualizer = ({ algorithm, isPlaying, speed, onReset }) => {
       </div>
 
       {/* Tree Visualization */}
-      <div className="bg-gray-50 dark:bg-dark-700 rounded-lg p-4 overflow-hidden">
-        <svg width="800" height="400" className="mx-auto">
+      <div className="bg-gray-50 dark:bg-dark-700 rounded-lg p-3 sm:p-4 overflow-x-auto">
+        <svg width="800" height="400" viewBox="0 0 800 400" className="mx-auto max-w-full h-auto" preserveAspectRatio="xMidYMid meet">
           {/* Edges */}
           {tree.edges.map((edge, index) => {
             const fromNode = tree.nodes.find(n => n.value === edge.from);

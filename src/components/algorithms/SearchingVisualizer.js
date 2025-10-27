@@ -332,20 +332,20 @@ const SearchingVisualizer = ({ algorithm, data, isPlaying, speed, targetValue, o
   return (
     <div className="space-y-4">
       {/* Controls */}
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-dark-700 dark:to-dark-600 rounded-2xl p-4 shadow-lg">
-        <div className="flex flex-wrap gap-4 items-center justify-end">
-          <div className="flex gap-6 text-sm">
-            <div className="flex items-center gap-2 bg-white dark:bg-dark-800 px-3 py-2 rounded-lg shadow-md">
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-dark-700 dark:to-dark-600 rounded-2xl p-3 sm:p-4 shadow-lg">
+        <div className="flex flex-wrap gap-2 sm:gap-4 items-center justify-end">
+          <div className="flex flex-wrap gap-2 sm:gap-6 text-xs sm:text-sm">
+            <div className="flex items-center gap-2 bg-white dark:bg-dark-800 px-2 sm:px-3 py-1 sm:py-2 rounded-lg shadow-md">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               <span className="text-gray-600 dark:text-gray-400 font-medium">Target:</span>
               <span className="font-mono text-blue-600 dark:text-blue-400 font-bold">{targetValue}</span>
             </div>
-            <div className="flex items-center gap-2 bg-white dark:bg-dark-800 px-3 py-2 rounded-lg shadow-md">
+            <div className="flex items-center gap-2 bg-white dark:bg-dark-800 px-2 sm:px-3 py-1 sm:py-2 rounded-lg shadow-md">
               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
               <span className="text-gray-600 dark:text-gray-400 font-medium">Comparisons:</span>
               <span className="font-mono text-red-600 dark:text-red-400 font-bold">{comparisons}</span>
             </div>
-            <div className="flex items-center gap-2 bg-white dark:bg-dark-800 px-3 py-2 rounded-lg shadow-md">
+            <div className="flex items-center gap-2 bg-white dark:bg-dark-800 px-2 sm:px-3 py-1 sm:py-2 rounded-lg shadow-md">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-gray-600 dark:text-gray-400 font-medium">Result:</span>
               <span className={`font-mono font-bold ${found ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
@@ -357,8 +357,8 @@ const SearchingVisualizer = ({ algorithm, data, isPlaying, speed, targetValue, o
       </div>
 
       {/* Array Visualization */}
-      <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-dark-700 dark:to-dark-800 rounded-2xl p-4 shadow-2xl">
-        <div className="flex items-end justify-center space-x-1 h-[250px] p-3 bg-white/50 dark:bg-dark-600/50 rounded-xl backdrop-blur-sm relative">
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-dark-700 dark:to-dark-800 rounded-2xl p-3 sm:p-4 shadow-2xl">
+        <div className="flex items-end justify-center space-x-0.5 sm:space-x-1 h-[280px] sm:h-[350px] p-2 sm:p-3 bg-white/50 dark:bg-dark-600/50 rounded-xl backdrop-blur-sm relative overflow-x-auto">
           {displayArray.map((item, index) => {
             const height = maxValue > 0 ? (item.value / maxValue) * containerHeight : 10;
             const minHeight = 10;
@@ -374,19 +374,19 @@ const SearchingVisualizer = ({ algorithm, data, isPlaying, speed, targetValue, o
             return (
               <div
                 key={index}
-                className="flex flex-col items-center space-y-2 group"
+                className="flex flex-col items-center space-y-1 sm:space-y-2 group"
               >
                 <div
-                  className={`w-8 rounded-t-lg transition-all duration-500 ease-out flex items-end justify-center text-xs font-bold text-white shadow-lg hover:shadow-xl transform hover:scale-110 ${barColor}`}
+                  className={`w-4 sm:w-6 lg:w-8 rounded-t-lg transition-all duration-500 ease-out flex items-end justify-center text-xs font-bold text-white shadow-lg hover:shadow-xl transform hover:scale-110 ${barColor}`}
                   style={{ 
                     height: `${finalHeight}px`
                   }}
                 >
-                  <span className="transform -rotate-90 whitespace-nowrap mb-2">
+                  <span className="transform -rotate-90 whitespace-nowrap mb-1 sm:mb-2 text-xs sm:text-sm">
                     {item.value}
                   </span>
                 </div>
-                <div className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-white dark:bg-dark-700 px-2 py-1 rounded-full shadow-sm">
+                <div className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-white dark:bg-dark-700 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-sm">
                   {index}
                 </div>
               </div>
@@ -411,28 +411,28 @@ const SearchingVisualizer = ({ algorithm, data, isPlaying, speed, targetValue, o
       ) : null}
 
       {/* Legend */}
-      <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-md rounded-2xl p-4 shadow-lg">
-        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Visual Legend</h4>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-3 rounded-lg">
-            <div className="w-6 h-6 bg-gradient-to-t from-blue-500 to-blue-400 rounded-lg shadow-md"></div>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Available</span>
+      <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-md rounded-2xl p-3 sm:p-4 shadow-lg">
+        <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Visual Legend</h4>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-2 sm:p-3 rounded-lg">
+            <div className="w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-t from-blue-500 to-blue-400 rounded-lg shadow-md"></div>
+            <span className="text-gray-700 dark:text-gray-300 font-medium text-xs sm:text-sm">Available</span>
           </div>
-          <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 p-3 rounded-lg">
-            <div className="w-6 h-6 bg-gradient-to-t from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700 rounded-lg shadow-md"></div>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Eliminated</span>
+          <div className="flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 p-2 sm:p-3 rounded-lg">
+            <div className="w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-t from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700 rounded-lg shadow-md"></div>
+            <span className="text-gray-700 dark:text-gray-300 font-medium text-xs sm:text-sm">Eliminated</span>
           </div>
-          <div className="flex items-center gap-3 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-3 rounded-lg">
-            <div className="w-6 h-6 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-lg shadow-md animate-pulse"></div>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Checking</span>
+          <div className="flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-2 sm:p-3 rounded-lg">
+            <div className="w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-lg shadow-md animate-pulse"></div>
+            <span className="text-gray-700 dark:text-gray-300 font-medium text-xs sm:text-sm">Checking</span>
           </div>
-          <div className="flex items-center gap-3 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-3 rounded-lg">
-            <div className="w-6 h-6 bg-gradient-to-t from-green-500 to-green-400 rounded-lg shadow-md animate-pulse"></div>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Found</span>
+          <div className="flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-2 sm:p-3 rounded-lg">
+            <div className="w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-t from-green-500 to-green-400 rounded-lg shadow-md animate-pulse"></div>
+            <span className="text-gray-700 dark:text-gray-300 font-medium text-xs sm:text-sm">Found</span>
           </div>
-          <div className="flex items-center gap-3 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-3 rounded-lg">
-            <div className="w-6 h-6 bg-gradient-to-t from-red-500 to-red-400 rounded-lg shadow-md"></div>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Not Found</span>
+          <div className="flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-2 sm:p-3 rounded-lg">
+            <div className="w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-t from-red-500 to-red-400 rounded-lg shadow-md"></div>
+            <span className="text-gray-700 dark:text-gray-300 font-medium text-xs sm:text-sm">Not Found</span>
           </div>
         </div>
       </div>
