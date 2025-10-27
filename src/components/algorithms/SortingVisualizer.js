@@ -273,16 +273,20 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
   useEffect(() => {
     console.log('isPlaying changed:', isPlaying);
     if (isPlaying) {
-      if (animationSteps.length === 0) {
-        const steps = generateSortingSteps();
-        if (steps.length === 0) return;
-      }
-      
       setIsAnimating(true);
-      setCurrentStep(0);
       
       const animate = async () => {
-        const steps = animationSteps.length > 0 ? animationSteps : generateSortingSteps();
+        // Always generate fresh steps when starting
+        const steps = generateSortingSteps();
+        
+        if (steps.length === 0) {
+          setIsAnimating(false);
+          return;
+        }
+        
+        // Store the generated steps
+        setAnimationSteps(steps);
+        setCurrentStep(0);
         
         for (let i = 0; i < steps.length; i++) {
           // Check isPlaying state before each step using ref
@@ -329,6 +333,11 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
                   newArray[idx].pivot = true;
                 });
                 break;
+              case 'sorted':
+                step.indices.forEach(idx => {
+                  newArray[idx].sorted = true;
+                });
+                break;
             }
             
             return newArray;
@@ -338,6 +347,7 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
         }
         
         setIsAnimating(false);
+        setCurrentStep(totalSteps);
         console.log('Animation finished');
       };
 
@@ -345,10 +355,10 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
     } else {
       setIsAnimating(false);
     }
-  }, [isPlaying, speed]);
+  }, [isPlaying, speed, generateSortingSteps, totalSteps]);
 
   const maxValue = Math.max(...array.map(item => item.value));
-  const containerHeight = 200;
+  const containerHeight = 220;
 
   return (
     <div className="space-y-4">
@@ -377,7 +387,7 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
 
       {/* Array Visualization */}
       <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-dark-700 dark:to-dark-800 rounded-2xl p-3 sm:p-4 shadow-2xl">
-        <div className="flex items-end justify-center space-x-0.5 sm:space-x-1 h-[200px] sm:h-[250px] p-2 sm:p-3 bg-white/50 dark:bg-dark-600/50 rounded-xl backdrop-blur-sm overflow-x-auto">
+        <div className="flex items-end justify-center space-x-0.5 sm:space-x-1 h-[280px] sm:h-[350px] p-2 sm:p-3 bg-white/50 dark:bg-dark-600/50 rounded-xl backdrop-blur-sm overflow-x-auto">
           {array.map((item, index) => {
             const height = maxValue > 0 ? (item.value / maxValue) * containerHeight : 10;
             const minHeight = 10;
