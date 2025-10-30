@@ -9,6 +9,7 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
   const [swaps, setSwaps] = useState(0);
   const [animationSteps, setAnimationSteps] = useState([]);
   const isPlayingRef = useRef(isPlaying);
+  const finishedRef = useRef(false);
 
   // Initialize array when data changes
   useEffect(() => {
@@ -27,6 +28,7 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
     setSwaps(0);
     setIsAnimating(false);
     setAnimationSteps([]);
+    finishedRef.current = false;
   }, [data]);
 
   // Generate sorting steps
@@ -257,11 +259,7 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
         break;
     }
 
-    setTotalSteps(steps.length);
-    setComparisons(comps);
-    setSwaps(swapCount);
-    setAnimationSteps(steps);
-    return steps;
+    return { steps, comps, swapCount };
   }, [algorithm, data]);
 
   // Update ref when isPlaying changes
@@ -272,90 +270,100 @@ const SortingVisualizer = ({ algorithm, data, isPlaying, speed, onDataChange, on
   // Simple animation control
   useEffect(() => {
     console.log('isPlaying changed:', isPlaying);
-    if (isPlaying) {
-      setIsAnimating(true);
-      
-      const animate = async () => {
-        // Always generate fresh steps when starting
-        const steps = generateSortingSteps();
-        
-        if (steps.length === 0) {
-          setIsAnimating(false);
-          return;
+    if (!isPlaying) {
+      setIsAnimating(false);
+      return;
+    }
+
+    // Prevent multiple concurrent animations or reruns after finishing
+    if (isAnimating || finishedRef.current) return;
+
+    setIsAnimating(true);
+
+    const animate = async () => {
+      // Always generate fresh steps when starting
+      const { steps, comps, swapCount } = generateSortingSteps();
+
+      if (steps.length === 0) {
+        setIsAnimating(false);
+        return;
+      }
+
+      // Initialize playback state once before the loop
+      setAnimationSteps(steps);
+      setComparisons(comps);
+      setSwaps(swapCount);
+      setTotalSteps(steps.length);
+      setCurrentStep(0);
+
+      for (let i = 0; i < steps.length; i++) {
+        // Check isPlaying state before each step using ref
+        if (!isPlayingRef.current) {
+          console.log('Animation paused at step', i);
+          break;
         }
-        
-        // Store the generated steps
-        setAnimationSteps(steps);
-        setCurrentStep(0);
-        
-        for (let i = 0; i < steps.length; i++) {
-          // Check isPlaying state before each step using ref
-          if (!isPlayingRef.current) {
-            console.log('Animation paused at step', i);
-            break;
-          }
 
-          const step = steps[i];
-          setCurrentStep(i + 1);
+        const step = steps[i];
+        setCurrentStep(i + 1);
 
-          setArray(prev => {
-            const newArray = [...prev];
-            
-            // Clear all states first
-            newArray.forEach(item => {
-              item.comparing = false;
-              item.selected = false;
-              item.pivot = false;
-            });
-            
-            switch (step.type) {
-              case 'compare':
-                step.indices.forEach(idx => {
-                  newArray[idx].comparing = true;
-                });
-                break;
-              case 'swap':
-                if (step.values) {
-                  step.indices.forEach((idx, i) => {
-                    if (step.values[i] !== undefined) {
-                      newArray[idx].value = step.values[i];
-                    }
-                  });
-                }
-                break;
-              case 'select':
-                step.indices.forEach(idx => {
-                  newArray[idx].selected = true;
-                });
-                break;
-              case 'pivot':
-                step.indices.forEach(idx => {
-                  newArray[idx].pivot = true;
-                });
-                break;
-              case 'sorted':
-                step.indices.forEach(idx => {
-                  newArray[idx].sorted = true;
-                });
-                break;
-            }
-            
-            return newArray;
+        setArray(prev => {
+          const newArray = [...prev];
+
+          // Clear all transient states first
+          newArray.forEach(item => {
+            item.comparing = false;
+            item.selected = false;
+            item.pivot = false;
           });
 
-          await new Promise(resolve => setTimeout(resolve, speed));
-        }
-        
-        setIsAnimating(false);
-        setCurrentStep(totalSteps);
-        console.log('Animation finished');
-      };
+          switch (step.type) {
+            case 'compare':
+              step.indices.forEach(idx => {
+                newArray[idx].comparing = true;
+              });
+              break;
+            case 'swap':
+              if (step.values) {
+                step.indices.forEach((idx, vi) => {
+                  if (step.values[vi] !== undefined) {
+                    newArray[idx].value = step.values[vi];
+                  }
+                });
+              }
+              break;
+            case 'select':
+              step.indices.forEach(idx => {
+                newArray[idx].selected = true;
+              });
+              break;
+            case 'pivot':
+              step.indices.forEach(idx => {
+                newArray[idx].pivot = true;
+              });
+              break;
+            case 'sorted':
+              step.indices.forEach(idx => {
+                newArray[idx].sorted = true;
+              });
+              break;
+            default:
+              break;
+          }
 
-      animate();
-    } else {
+          return newArray;
+        });
+
+        await new Promise(resolve => setTimeout(resolve, speed));
+      }
+
       setIsAnimating(false);
-    }
-  }, [isPlaying, speed, generateSortingSteps, totalSteps]);
+      finishedRef.current = true;
+      setCurrentStep(steps.length);
+      console.log('Animation finished');
+    };
+
+    animate();
+  }, [isPlaying, speed, isAnimating, generateSortingSteps]);
 
   const maxValue = Math.max(...array.map(item => item.value));
   const containerHeight = 220;
