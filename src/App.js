@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -60,13 +61,13 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className="h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 transition-all duration-500 flex flex-col overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 transition-all duration-500 flex flex-col">
         <Header 
           onToggleSidebar={handleToggleSidebar}
           isSidebarOpen={isSidebarOpen}
         />
         
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 min-h-0">
           <Sidebar 
             selectedAlgorithm={selectedAlgorithm}
             onAlgorithmSelect={handleAlgorithmSelect}
@@ -85,6 +86,7 @@ function App() {
             onGenerateData={handleReset}
           />
         </div>
+        <Footer />
       </div>
     </ThemeProvider>
   );
